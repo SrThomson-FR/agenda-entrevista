@@ -1,7 +1,7 @@
 // Configuración de la agenda. Pega aquí la URL de la aplicación web de Google Apps Script
 // (termina en /exec). Mientras esté vacía, la página funciona en MODO DE PRUEBA y no guarda nada real.
 window.AGENDA_CONFIG = {
-  API_URL: '',
+  API_URL: 'https://script.google.com/macros/s/AKfycbzFa_f_4Fq6tiVlh6wELGXb-81R5wwYaF3qXb5sEPk3sefzt8fu4BsLuGQHIIxuuj8gYg/exec',
   CLOSE_MS: Date.parse('2026-10-30T20:00:00-05:00'),
   CLOSE_TEXT: 'el viernes 30 de octubre a las 8:00 pm',
   TIMES: [
