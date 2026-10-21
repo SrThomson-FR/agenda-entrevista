@@ -89,6 +89,31 @@ th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;verti
 th{background:var(--navy);color:var(--white);font:600 14px/1.2 var(--f-head);white-space:nowrap}
 td.libre{color:rgba(0,15,119,.45)}
 textarea{width:100%;min-height:120px;font:14px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:8px}
+
+/* Avisos destacados */
+.alerts{display:grid;gap:16px;margin:0 0 30px}
+.alert{border-radius:16px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:start;box-shadow:0 8px 0 rgba(0,15,119,.18)}
+.alert .ico{grid-row:1 / span 3;width:64px;height:64px;border-radius:50%;display:grid;place-items:center}
+.alert .ico svg{width:34px;height:34px}
+.alert .tag{font:700 14px/1.2 var(--f-head);letter-spacing:.1em;text-transform:uppercase;margin:0}
+.alert h2{font:700 clamp(22px,4.6vw,30px)/1.2 var(--f-head);margin:0;text-wrap:balance}
+.alert p{margin:0;font-size:18px}
+.alert .body{grid-column:2}
+.alert-link{background:var(--gold);color:var(--navy);border:4px solid var(--navy)}
+.alert-link .ico{background:var(--navy);color:var(--gold)}
+.alert-link h2 em{font-style:normal;background:var(--navy);color:var(--gold);padding:0 8px;border-radius:6px;white-space:nowrap}
+.alert-link .no{margin-top:8px;font-weight:700}
+.alert-docs{background:var(--navy);color:var(--white);border:4px solid var(--cyan)}
+.alert-docs .ico{background:var(--cyan);color:var(--navy)}
+.alert-docs .tag{color:var(--cyan)}
+.mails{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.mails li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.1);border-radius:10px;padding:10px 12px}
+.mails code{font:600 18px/1.3 var(--f-body);color:var(--white);user-select:all;word-break:break-all;flex:1 1 220px;min-width:0}
+.mails .cp{appearance:none;border:2px solid var(--cyan);background:transparent;color:var(--cyan);border-radius:8px;font:600 15px/1 var(--f-head);padding:10px 14px;min-height:44px;cursor:pointer}
+.mails .cp:hover{background:var(--cyan);color:var(--navy)}
+.alert-docs .mailto{display:inline-block;margin-top:14px;background:var(--gold);color:var(--navy);font:700 18px/1.2 var(--f-head);padding:16px 20px;border-radius:12px;text-decoration:none;min-height:52px}
+.alert-docs .mailto:hover{filter:brightness(1.06)}
+@media (max-width:520px){.alert{grid-template-columns:1fr}.alert .ico{grid-row:auto;width:54px;height:54px}.alert .body{grid-column:1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -103,6 +128,28 @@ textarea{width:100%;min-height:120px;font:14px/1.4 ui-monospace,Menlo,Consolas,m
 </header>
 
 <main class="wrap">
+  <div class="alerts">
+    <section class="alert alert-link" aria-labelledby="al1">
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5 21 7v10l-5.5-3.5"/></svg></div>
+      <p class="tag">Muy importante</p>
+      <h2 id="al1">Tu entrevista es por el <em>MISMO ENLACE</em> de las clases</h2>
+      <div class="body">
+        <p>El día y la hora que reserves, entra al enlace de la clase de siempre. Ahí te esperamos.</p>
+        <p class="no">No esperes un correo ni una invitación a otra reunión: no van a llegar.</p>
+      </div>
+    </section>
+    <section class="alert alert-docs" aria-labelledby="al2">
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg></div>
+      <p class="tag">Antes de tu entrevista</p>
+      <h2 id="al2">Envíanos tu hoja de vida y la vacante</h2>
+      <div class="body">
+        <p>Para simular tu entrevista necesitamos que nos envíes <strong>tu hoja de vida</strong> y <strong>la vacante a la que te postulas</strong>, antes de la entrevista. Envíalas a los tres correos:</p>
+        <ul class="mails" id="mails"></ul>
+        <a class="mailto" id="mailto" href="#">Abrir mi correo con los tres destinatarios</a>
+        <p id="mailNote" style="margin-top:10px;font-size:15px;color:var(--cyan)"></p>
+      </div>
+    </section>
+  </div>
   <div id="banner" aria-live="polite"></div>
 
   <section class="step" aria-labelledby="h1s">
@@ -310,7 +357,7 @@ $('form').addEventListener('submit', async ev=>{
     S.lookedUp=payload.email;
     await refresh(payload.email);
     const msg = r.status==='moved' ? 'Cambiamos tu hora.' : (r.status==='updated' ? 'Actualizamos tus datos.' : 'Tu hora quedó guardada.');
-    banner('ok','<strong>¡Listo, '+esc(payload.name.split(' ')[0])+'!</strong> '+msg+'<span class="big">'+esc(slotText(payload.slotId))+'</span>Si necesitas cambiarla, vuelve a entrar y usa el mismo correo ('+esc(payload.email)+').');
+    banner('ok','<strong>¡Listo, '+esc(payload.name.split(' ')[0])+'!</strong> '+msg+'<span class="big">'+esc(slotText(payload.slotId))+'</span><br><strong>Recuerda dos cosas:</strong><br>1. Entra por el <strong>mismo enlace de las clases</strong>. No llegará ninguna invitación.<br>2. Antes de la entrevista, envía tu <strong>hoja de vida y la vacante</strong> a los tres correos de arriba.<br><br>Si necesitas cambiar tu hora, vuelve a entrar y usa el mismo correo ('+esc(payload.email)+').');
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
@@ -351,6 +398,23 @@ $('adminGo').addEventListener('click', async ()=>{
     catch(e){ const ta=document.createElement('textarea'); ta.value=tsv; ta.readOnly=true; out.appendChild(ta); ta.select(); note.textContent='Selecciona el texto y cópialo con Ctrl+C.'; }
   });
 });
+
+
+/* ---------- Avisos: correos para enviar la hoja de vida y la vacante ---------- */
+const MAILS=['magda.padilla@fimlm.education','beatriz.alape@fimlm.org','christian.rojas@fimlm.education'];
+(function(){
+  const ul=$('mails');
+  MAILS.forEach(m=>{
+    const li=document.createElement('li'), c=document.createElement('code'), b=document.createElement('button');
+    c.textContent=m; b.type='button'; b.className='cp'; b.textContent='Copiar';
+    b.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(m); $('mailNote').textContent='Copiado: '+m; }
+      catch(e){ const r=document.createRange(); r.selectNodeContents(c); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); $('mailNote').textContent='Selecciona el correo y cópialo con Ctrl+C.'; }
+    });
+    li.appendChild(c); li.appendChild(b); ul.appendChild(li);
+  });
+  $('mailto').href='mailto:'+MAILS.join(',')+'?subject='+encodeURIComponent('Hoja de vida y vacante · Entrevista Módulo 3');
+})();
 
 /* ---------- Inicio ---------- */
 if(!LIVE) banner('demo','<strong>Modo de prueba.</strong> Lo que guardes aquí <b>no es una reserva real</b>: queda solo en este navegador.');
