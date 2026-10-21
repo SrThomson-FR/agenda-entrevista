@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agenda tu entrevista · FIMLM</title>
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Paleta de las presentaciones del curso */
+:root{
+  --navy:#000F77; --royal:#0016B7; --blue:#2C70BA; --sky:#4F99F7; --cyan:#65CAFA; --vivid:#0021F5;
+  --gold:#ECAE44; --teal:#194568; --teal2:#2E7099; --white:#FFFFFF;
+  --tint:rgba(101,202,250,.14); --line:rgba(44,112,186,.35);
+  --f-head:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-body:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--white);color:var(--navy);font:18px/1.5 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero{margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;
+  padding:28px max(16px,env(safe-area-inset-right,0px)) 30px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(135deg,var(--navy) 0%,var(--royal) 55%,var(--blue) 100%);color:var(--white)}
+.wrap{max-width:760px;margin:0 auto}
+.eyebrow{font:600 14px/1.35 var(--f-head);letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin:0 0 10px}
+h1{font:700 clamp(28px,6vw,40px)/1.15 var(--f-head);margin:0 0 10px;text-wrap:balance}
+.hero p{margin:0;font-size:19px;max-width:56ch}
+.hero .deadline{margin-top:14px;display:inline-block;background:var(--gold);color:var(--navy);font-weight:700;
+  padding:8px 14px;border-radius:8px;font-size:16px}
+main{padding-block:26px 40px}
+.step{margin:0 0 28px}
+.step h2{font:600 21px/1.25 var(--f-head);margin:0 0 4px;display:flex;gap:12px;align-items:center}
+.step h2 .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--white);
+  display:grid;place-items:center;font-size:17px}
+.step .hint{margin:0 0 12px 46px;color:var(--teal2);font-size:16px}
+.grid{display:grid;gap:12px}
+.days{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.times{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.opt{appearance:none;border:2px solid var(--line);background:var(--white);color:var(--navy);border-radius:12px;
+  padding:14px 12px;min-height:76px;font:inherit;text-align:center;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;transition:transform .08s,border-color .15s,background .15s}
+.opt:hover:not(:disabled):not([aria-pressed="true"]){border-color:var(--blue);background:var(--tint)}
+.opt .big{font:700 22px/1.1 var(--f-head)}
+.opt .sub{font-size:15px;color:var(--teal2)}
+.opt[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.opt[aria-pressed="true"] .sub{color:var(--cyan)}
+.opt:disabled{cursor:not-allowed;background:repeating-linear-gradient(135deg,rgba(44,112,186,.07) 0 8px,transparent 8px 16px);
+  color:rgba(0,15,119,.5);border-style:dashed}
+.opt:disabled .sub{color:rgba(0,15,119,.55)}
+.opt .mine{font-size:13px;font-weight:700;background:var(--gold);color:var(--navy);border-radius:99px;padding:1px 9px;margin-top:3px}
+:is(button,input,summary):focus-visible{outline:3px solid var(--vivid);outline-offset:2px}
+.form{display:grid;gap:16px;margin-left:0}
+label{display:block;font-weight:700;margin-bottom:6px}
+label .opcional{font-weight:400;color:var(--teal2)}
+input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;padding:13px 14px;min-height:52px;
+  border:2px solid var(--line);border-radius:10px;color:var(--navy);background:var(--white)}
+input:focus{border-color:var(--vivid);outline:none;box-shadow:0 0 0 3px rgba(79,153,247,.35)}
+.chosen{background:var(--tint);border-left:6px solid var(--blue);border-radius:8px;padding:12px 16px;font-size:18px}
+.chosen strong{font-family:var(--f-head)}
+.save{appearance:none;border:0;border-radius:12px;background:var(--gold);color:var(--navy);font:700 20px/1 var(--f-head);
+  padding:18px 22px;min-height:60px;cursor:pointer;width:100%;transition:filter .15s,transform .08s}
+.save:hover:not(:disabled){filter:brightness(1.05)}
+.save:active:not(:disabled){transform:translateY(1px)}
+.save:disabled{background:rgba(44,112,186,.18);color:rgba(0,15,119,.55);cursor:not-allowed}
+.msg{border-radius:10px;padding:14px 16px;margin:0 0 22px;font-size:17px}
+.msg strong{font-family:var(--f-head)}
+.msg.ok{background:var(--teal);color:var(--white)}
+.msg.ok .big{display:block;font:700 22px/1.25 var(--f-head);margin:4px 0}
+.msg.warn{background:rgba(236,174,68,.22);border:2px solid var(--gold)}
+.msg.info{background:var(--tint);border:2px solid var(--line)}
+.msg.demo{background:var(--navy);color:var(--white)}
+.msg.demo b{color:var(--gold)}
+.field-hint{margin:6px 0 0;font-size:15px;color:var(--teal2)}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--teal2);font-size:15px}
+details.admin{margin-top:14px}
+details.admin summary{cursor:pointer;font-weight:700;color:var(--blue);padding:6px 0}
+.admin-box{margin-top:10px;display:grid;gap:12px}
+.admin-box .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.admin-box .row>div{flex:1 1 180px;min-width:0}
+.btn2{appearance:none;border:2px solid var(--navy);background:var(--white);color:var(--navy);border-radius:10px;
+  font:600 16px/1 var(--f-head);padding:14px 16px;min-height:52px;cursor:pointer}
+.btn2:hover{background:var(--navy);color:var(--white)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--navy);color:var(--white);font:600 14px/1.2 var(--f-head);white-space:nowrap}
+td.libre{color:rgba(0,15,119,.45)}
+textarea{width:100%;min-height:120px;font:14px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Módulo 3 · Entrevista de trabajo</p>
+    <h1>Agenda tu entrevista de práctica</h1>
+    <p>Elige un día y una hora, escribe tus datos y guarda. Cada entrevista dura 30 minutos.</p>
+    <span class="deadline" id="deadline">Puedes reservar o cambiar tu hora hasta el viernes 30 de octubre a las 8:00 pm</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner" aria-live="polite"></div>
+
+  <section class="step" aria-labelledby="h1s">
+    <h2 id="h1s"><span class="n">1</span>Elige el día</h2>
+    <p class="hint">Los días sin horas libres aparecen bloqueados.</p>
+    <div class="grid days" id="days"></div>
+  </section>
+
+  <section class="step" aria-labelledby="h2s">
+    <h2 id="h2s"><span class="n">2</span>Elige la hora</h2>
+    <p class="hint" id="timesHint">Primero elige un día.</p>
+    <div class="grid times" id="times"></div>
+  </section>
+
+  <section class="step" aria-labelledby="h3s">
+    <h2 id="h3s"><span class="n">3</span>Escribe tus datos y guarda</h2>
+    <p class="hint">Usa el mismo correo si más adelante quieres cambiar tu hora.</p>
+    <form class="form" id="form" novalidate>
+      <div>
+        <label for="name">Nombre completo</label>
+        <input type="text" id="name" autocomplete="name" maxlength="80" placeholder="Ej.: María Fernanda Gómez">
+      </div>
+      <div>
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" autocomplete="email" inputmode="email" maxlength="120" placeholder="nombre@correo.com">
+        <p class="field-hint" id="emailHint"></p>
+      </div>
+      <div>
+        <label for="vacante">Vacante a la que te postulas <span class="opcional">(opcional)</span></label>
+        <input type="text" id="vacante" maxlength="120" placeholder="Ej.: Auxiliar administrativa">
+      </div>
+      <div class="chosen" id="chosen" aria-live="polite">Aún no has elegido día y hora.</div>
+      <button class="save" id="save" type="submit" disabled>Guardar mi hora</button>
+    </form>
+  </section>
+</main>
+
+<footer class="wrap" style="padding-bottom:36px">
+  <p style="margin:0 0 4px">Si ya reservaste y quieres cambiar tu hora, escribe el mismo correo y elige otra. Solo tú puedes cambiar tu reserva.</p>
+  <details class="admin" id="admin">
+    <summary>Panel del profesor</summary>
+    <div class="admin-box">
+      <div class="row">
+        <div><label for="code">Código</label><input type="password" id="code" autocomplete="off" inputmode="numeric" maxlength="20"></div>
+        <button class="btn2" id="adminGo" type="button">Ver agenda</button>
+      </div>
+      <div id="adminOut" aria-live="polite"></div>
+    </div>
+  </details>
+</footer>
+
+<script src="config.js"></script>
+<script>
+(function(){
+'use strict';
+const CFG = window.AGENDA_CONFIG;
+const $ = id => document.getElementById(id);
+const slotId = (d,t) => d + '_' + t;
+const dayOf = id => CFG.DAYS.find(d => d.id === id.split('_')[0]);
+const timeOf = id => CFG.TIMES.find(t => t.id === id.split('_')[1]);
+const slotText = id => dayOf(id).label + ' · ' + timeOf(id).range;
+const LIVE = !!CFG.API_URL;
+
+/* ---------- Acceso a datos ---------- */
+function allSlots(){ const o=[]; CFG.DAYS.forEach(d=>CFG.TIMES.forEach(t=>o.push({id:slotId(d.id,t.id),cap:d.cap}))); return o; }
+const normEmail = s => String(s||'').trim().toLowerCase();
+const okEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s) && s.length <= 120;
+
+async function post(body){
+  const r = await fetch(CFG.API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
+  if(!r.ok) throw new Error('http');
+  return r.json();
+}
+/* Modo de prueba: guarda solo en este navegador para poder ensayar la pantalla. */
+const demo = {
+  read(){ try{ return JSON.parse(localStorage.getItem('agenda-demo')||'[]'); }catch(e){ return []; } },
+  write(v){ try{ localStorage.setItem('agenda-demo', JSON.stringify(v)); }catch(e){} },
+  async state(email){
+    const rows=this.read(), e=normEmail(email), me=okEmail(e)?rows.find(r=>r.email===e):null;
+    return {ok:true, closed:Date.now()>=CFG.CLOSE_MS,
+      slots:allSlots().map(s=>({id:s.id,cap:s.cap,taken:rows.filter(r=>r.slotId===s.id).length})),
+      mine: me?{slotId:me.slotId,name:me.name,vacante:me.vacante}:null};
+  },
+  async book(b){
+    const rows=this.read(), e=normEmail(b.email), s=allSlots().find(x=>x.id===b.slotId);
+    if(!s||String(b.name).trim().length<2||!okEmail(e)) return {ok:false,error:'invalid'};
+    const me=rows.find(r=>r.email===e);
+    if(!me||me.slotId!==s.id){ if(rows.filter(r=>r.slotId===s.id).length>=s.cap) return {ok:false,error:'taken'}; }
+    if(me){ me.slotId=s.id; me.name=b.name.trim(); me.vacante=(b.vacante||'').trim(); } else rows.push({slotId:s.id,email:e,name:b.name.trim(),vacante:(b.vacante||'').trim()});
+    this.write(rows); return {ok:true,status:me?'moved':'created',slotId:s.id};
+  },
+  async admin(code){
+    if(String(code)!=='2026') return {ok:false,error:'forbidden'};
+    const rows=this.read(), ag=[];
+    allSlots().forEach(s=>{ const here=rows.filter(r=>r.slotId===s.id); for(let k=0;k<s.cap;k++){ const r=here[k];
+      ag.push({dia:dayOf(s.id).label,hora:timeOf(s.id).range,profesor:'',estudiante:r?r.name:'',correo:r?r.email:'',vacante:r?r.vacante:'',hoja:''}); } });
+    return {ok:true,agenda:ag,total:rows.length,cupos:ag.length};
+  }
+};
+const api = LIVE ? {
+  state: email => post({action:'state', email}),
+  book: b => post(Object.assign({action:'book'}, b)),
+  admin: code => post({action:'admin', code})
+} : { state: e=>demo.state(e), book: b=>demo.book(b), admin: c=>demo.admin(c) };
+
+/* ---------- Estado de la pantalla ---------- */
+const S = { slots:{}, mine:null, closed: Date.now() >= CFG.CLOSE_MS, day:null, slot:null, saving:false, lookedUp:'' };
+
+function free(id){
+  const s=S.slots[id]; if(!s) return 0;
+  return s.cap - s.taken + (S.mine && S.mine.slotId===id ? 1 : 0);
+}
+function banner(kind, html){
+  const b=$('banner'); b.textContent='';
+  if(!kind) return;
+  const d=document.createElement('div'); d.className='msg '+kind; d.innerHTML=html; b.appendChild(d);
+}
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function renderDays(){
+  const box=$('days'); box.textContent='';
+  CFG.DAYS.forEach(d=>{
+    const libres=CFG.TIMES.reduce((n,t)=>n+Math.max(0,free(slotId(d.id,t.id))),0);
+    const b=document.createElement('button'); b.type='button'; b.className='opt';
+    b.setAttribute('aria-pressed', String(S.day===d.id));
+    b.disabled = S.closed || libres===0;
+    const mineHere = S.mine && S.mine.slotId.split('_')[0]===d.id;
+    b.innerHTML='<span class="big">'+esc(d.name+' '+d.num)+'</span><span class="sub">'+
+      (libres===0?'Sin horas libres':'octubre · '+libres+(libres===1?' cupo libre':' cupos libres'))+'</span>'+
+      (mineHere?'<span class="mine">Tu reserva</span>':'');
+    b.addEventListener('click',()=>{ S.day=d.id; if(S.slot && S.slot.split('_')[0]!==d.id) S.slot=null; renderAll(); });
+    box.appendChild(b);
+  });
+}
+function renderTimes(){
+  const box=$('times'); box.textContent='';
+  if(!S.day){ $('timesHint').textContent='Primero elige un día.'; return; }
+  $('timesHint').textContent='Horas del '+dayOf(S.day+'_x').label.toLowerCase()+'. Las horas ocupadas están bloqueadas.';
+  CFG.TIMES.forEach(t=>{
+    const id=slotId(S.day,t.id), f=free(id), isMine=S.mine&&S.mine.slotId===id;
+    const b=document.createElement('button'); b.type='button'; b.className='opt';
+    b.setAttribute('aria-pressed', String(S.slot===id));
+    b.disabled = S.closed || f<=0;
+    b.innerHTML='<span class="big">'+esc(t.label)+'</span><span class="sub">'+(f<=0?'Ocupada':(f===1?'1 cupo libre':f+' cupos libres'))+'</span>'+(isMine?'<span class="mine">Tu hora</span>':'');
+    b.addEventListener('click',()=>{ S.slot=id; renderAll(); });
+    box.appendChild(b);
+  });
+}
+function renderForm(){
+  const name=$('name').value.trim(), email=normEmail($('email').value);
+  $('chosen').innerHTML = S.slot ? 'Elegiste: <strong>'+esc(slotText(S.slot))+'</strong>' : 'Aún no has elegido día y hora.';
+  $('save').disabled = S.closed || S.saving || !S.slot || name.length<2 || !okEmail(email);
+  $('save').textContent = S.saving ? 'Guardando…' : (S.mine ? 'Guardar el cambio' : 'Guardar mi hora');
+}
+function renderAll(){ renderDays(); renderTimes(); renderForm(); }
+
+/* ---------- Carga y sincronización ---------- */
+async function refresh(email){
+  try{
+    const r = await api.state(email||'');
+    if(!r.ok) throw new Error(r.error);
+    S.slots={}; r.slots.forEach(s=>S.slots[s.id]=s);
+    S.mine=r.mine; S.closed = r.closed || S.closed;
+    if(S.slot && free(S.slot)<=0) S.slot=null;
+    renderAll();
+    return true;
+  }catch(e){
+    banner('warn','<strong>No pudimos conectar.</strong> Revisa tu internet y vuelve a intentar.');
+    return false;
+  }
+}
+function closedBanner(){
+  if(S.closed) banner('warn','<strong>La agenda está cerrada.</strong> El plazo para reservar o cambiar la hora terminó '+esc(CFG.CLOSE_TEXT)+'.');
+}
+
+async function lookup(){
+  const email=normEmail($('email').value);
+  if(!okEmail(email)){ $('emailHint').textContent=''; return; }
+  if(email===S.lookedUp) return;
+  S.lookedUp=email;
+  if(!(await refresh(email))) return;
+  if(S.mine){
+    $('emailHint').textContent='Ya tienes una reserva con este correo. Si eliges otra hora y guardas, se cambia.';
+    if(!$('name').value.trim()) $('name').value=S.mine.name;
+    if(!$('vacante').value.trim()) $('vacante').value=S.mine.vacante.replace(/^'/,'');
+    S.day=S.mine.slotId.split('_')[0]; S.slot=S.mine.slotId;
+    banner('info','<strong>Tu reserva actual:</strong> '+esc(slotText(S.mine.slotId))+'.');
+  } else { $('emailHint').textContent=''; }
+  renderAll();
+}
+
+$('email').addEventListener('change', lookup);
+$('email').addEventListener('blur', lookup);
+['name','email','vacante'].forEach(id=>$(id).addEventListener('input', renderForm));
+
+$('form').addEventListener('submit', async ev=>{
+  ev.preventDefault();
+  if($('save').disabled) return;
+  S.saving=true; renderForm(); banner('');
+  const payload={slotId:S.slot,name:$('name').value.trim(),email:normEmail($('email').value),vacante:$('vacante').value.trim()};
+  let r;
+  try{ r = await api.book(payload); }catch(e){ r={ok:false,error:'network'}; }
+  S.saving=false;
+  if(r.ok){
+    S.lookedUp=payload.email;
+    await refresh(payload.email);
+    const msg = r.status==='moved' ? 'Cambiamos tu hora.' : (r.status==='updated' ? 'Actualizamos tus datos.' : 'Tu hora quedó guardada.');
+    banner('ok','<strong>¡Listo, '+esc(payload.name.split(' ')[0])+'!</strong> '+msg+'<span class="big">'+esc(slotText(payload.slotId))+'</span>Si necesitas cambiarla, vuelve a entrar y usa el mismo correo ('+esc(payload.email)+').');
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const errs={
+    taken:'<strong>Esa hora se acaba de ocupar.</strong> Otra persona la guardó un instante antes que tú. Elige otra hora.',
+    closed:'<strong>La agenda está cerrada.</strong> El plazo terminó '+esc(CFG.CLOSE_TEXT)+'.',
+    invalid:'<strong>Revisa tus datos.</strong> Escribe tu nombre y un correo válido, y elige una hora.',
+    busy:'<strong>Hay mucha gente guardando a la vez.</strong> Espera unos segundos y vuelve a intentar.',
+    network:'<strong>No pudimos conectar.</strong> Revisa tu internet y vuelve a intentar.'
+  };
+  banner('warn', errs[r.error] || errs.network);
+  if(r.error==='closed') S.closed=true;
+  await refresh(payload.email); window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ---------- Panel del profesor ---------- */
+$('adminGo').addEventListener('click', async ()=>{
+  const out=$('adminOut'); out.textContent='Consultando…';
+  let r; try{ r=await api.admin($('code').value.trim()); }catch(e){ r={ok:false,error:'network'}; }
+  out.textContent='';
+  if(!r.ok){ out.textContent = r.error==='forbidden' ? 'Código incorrecto.' : 'No pudimos conectar. Intenta de nuevo.'; return; }
+  const head=['N.º','Día','Hora','Profesor asignado','Estudiante agendado','Correo','Vacante de interés','¿Envió hoja de vida?'];
+  const rows=r.agenda.map((a,i)=>[String(i+1),a.dia,a.hora,a.profesor,a.estudiante,a.correo,a.vacante,a.hoja]);
+  const p=document.createElement('p'); p.style.margin='0'; p.textContent=r.total+' de '+r.cupos+' cupos ocupados.'; out.appendChild(p);
+  const wrap=document.createElement('div'); wrap.className='tablewrap';
+  const t=document.createElement('table'); const thr=document.createElement('tr');
+  head.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thr.appendChild(th); });
+  const thead=document.createElement('thead'); thead.appendChild(thr); t.appendChild(thead);
+  const tb=document.createElement('tbody');
+  rows.forEach(row=>{ const tr=document.createElement('tr'); row.forEach((c,ci)=>{ const td=document.createElement('td');
+    if(ci===4 && !c){ td.textContent='libre'; td.className='libre'; } else td.textContent=c; tr.appendChild(td); }); tb.appendChild(tr); });
+  t.appendChild(tb); wrap.appendChild(t); out.appendChild(wrap);
+  const tsv=[head].concat(rows).map(r2=>r2.join('\t')).join('\n');
+  const btn=document.createElement('button'); btn.type='button'; btn.className='btn2'; btn.textContent='Copiar tabla'; out.appendChild(btn);
+  const note=document.createElement('p'); note.className='field-hint'; out.appendChild(note);
+  btn.addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(tsv); note.textContent='Tabla copiada. Pégala en Excel o Google Sheets.'; }
+    catch(e){ const ta=document.createElement('textarea'); ta.value=tsv; ta.readOnly=true; out.appendChild(ta); ta.select(); note.textContent='Selecciona el texto y cópialo con Ctrl+C.'; }
+  });
+});
+
+/* ---------- Inicio ---------- */
+if(!LIVE) banner('demo','<strong>Modo de prueba.</strong> Lo que guardes aquí <b>no es una reserva real</b>: queda solo en este navegador.');
+refresh('').then(ok=>{ if(ok){ if(LIVE) banner(''); closedBanner(); if(!LIVE) banner('demo','<strong>Modo de prueba.</strong> Lo que guardes aquí <b>no es una reserva real</b>: queda solo en este navegador.'); } });
+setInterval(()=>{ if(!S.saving && !document.hidden) refresh(S.lookedUp); }, 20000);
+renderAll();
+})();
+</script>
+</body>
+</html>
